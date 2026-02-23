@@ -2,12 +2,7 @@
 
 Translates natural language into shell commands. Type `aish <description>`, and the generated command is placed on your prompt line for review before executing.
 
-```
-$ aish find all go files modified in the last week
-# your next prompt pre-fills with:
-
-$ find . -name "*.go" -mtime -7
-```
+![aish screenshot](./screenshot.png)
 
 ## Requirements
 
