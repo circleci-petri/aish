@@ -2,6 +2,13 @@
 # aish — AI Shell Command Generator
 # Source this file from your ~/.zshrc or ~/.bashrc
 
+# Capture the path this file was sourced from, for use by aish-update
+if [[ -n "$ZSH_VERSION" ]]; then
+    _AISH_SOURCE_PATH="${(%):-%x}"
+else
+    _AISH_SOURCE_PATH="${BASH_SOURCE[0]}"
+fi
+
 _aish_check_provider() {
     if [[ -z "$AISH_PROVIDER" ]]; then
         echo "aish: AISH_PROVIDER is not set." >&2
@@ -117,6 +124,25 @@ _aish_clean_result() {
     # Trim leading/trailing whitespace
     text=$(printf '%s' "$text" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
     printf '%s' "$text"
+}
+
+aish-update() {
+    local url="https://raw.githubusercontent.com/circleci-petri/aish/main/aish.sh"
+    local dest="$_AISH_SOURCE_PATH"
+    local tmp
+    tmp=$(mktemp)
+
+    echo "aish: Downloading latest version to $dest..." >&2
+    if curl -fsSL "$url" -o "$tmp"; then
+        mv "$tmp" "$dest"
+        # shellcheck source=/dev/null
+        source "$dest"
+        echo "aish: Updated successfully." >&2
+    else
+        rm -f "$tmp"
+        echo "aish: Update failed. Check your network connection." >&2
+        return 1
+    fi
 }
 
 aish() {

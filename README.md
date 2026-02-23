@@ -46,6 +46,16 @@ source ~/aish.sh
 
 To override the model for Anthropic or OpenAI, add `export AISH_MODEL=<model>` before the `source` line.
 
+## Updating
+
+To update aish to the latest version, run:
+
+```bash
+aish-update
+```
+
+This downloads the latest script and reloads all functions in your current shell session.
+
 ## Usage
 
 ```bash
