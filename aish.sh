@@ -9,6 +9,8 @@ else
     _AISH_SOURCE_PATH="${BASH_SOURCE[0]}"
 fi
 
+_AISH_SYSTEM_PROMPT='You are a command-line generator. Given a natural language description of a task, output ONLY the corresponding shell command. Rules:\n- Output the raw command only — no explanations, no markdown, no code fences\n- If the task requires multiple commands, chain them with && or ;\n- Use common CLI tools and flags'
+
 _aish_check_provider() {
     if [[ -z "$AISH_PROVIDER" ]]; then
         echo "aish: AISH_PROVIDER is not set." >&2
@@ -69,7 +71,7 @@ _aish_call_anthropic() {
         -d '{
             "model": "'"$model"'",
             "max_tokens": 256,
-            "system": "You are a command-line generator. Given a natural language description of a task, output ONLY the corresponding shell command. Rules:\n- Output the raw command only — no explanations, no markdown, no code fences\n- If the task requires multiple commands, chain them with && or ;\n- Use common CLI tools and flags",
+            "system": "'"$_AISH_SYSTEM_PROMPT"'",
             "messages": [{"role": "user", "content": '"$escaped_prompt"'}]
         }' | jq -r '.content[0].text // empty'
 }
@@ -87,7 +89,7 @@ _aish_call_openai() {
             "model": "'"$model"'",
             "max_tokens": 256,
             "messages": [
-                {"role": "system", "content": "You are a command-line generator. Given a natural language description of a task, output ONLY the corresponding shell command. Rules:\n- Output the raw command only — no explanations, no markdown, no code fences\n- If the task requires multiple commands, chain them with && or ;\n- Use common CLI tools and flags"},
+                {"role": "system", "content": "'"$_AISH_SYSTEM_PROMPT"'"},
                 {"role": "user", "content": '"$escaped_prompt"'}
             ]
         }' | jq -r '.choices[0].message.content // empty'
@@ -111,7 +113,7 @@ _aish_call_ollama() {
             "model": "'"$model"'",
             "stream": false,
             "messages": [
-                {"role": "system", "content": "You are a command-line generator. Given a natural language description of a task, output ONLY the corresponding shell command. Rules:\n- Output the raw command only — no explanations, no markdown, no code fences\n- If the task requires multiple commands, chain them with && or ;\n- Use common CLI tools and flags"},
+                {"role": "system", "content": "'"$_AISH_SYSTEM_PROMPT"'"},
                 {"role": "user", "content": '"$escaped_prompt"'}
             ]
         }' | jq -r '.message.content // empty'
