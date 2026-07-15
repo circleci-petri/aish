@@ -61,11 +61,12 @@ _aish_spinner_stop() {
 _aish_call_anthropic() {
     local prompt="$1"
     local model="${AISH_MODEL:-claude-sonnet-4-6}"
+    local api_key="${AISH_ANTHROPIC_API_KEY:-$ANTHROPIC_API_KEY}"
     local escaped_prompt
     escaped_prompt=$(_aish_escape_json "$prompt")
 
     curl -s https://api.anthropic.com/v1/messages \
-        -H "x-api-key: $ANTHROPIC_API_KEY" \
+        -H "x-api-key: $api_key" \
         -H "anthropic-version: 2023-06-01" \
         -H "content-type: application/json" \
         -d '{
@@ -79,11 +80,12 @@ _aish_call_anthropic() {
 _aish_call_openai() {
     local prompt="$1"
     local model="${AISH_MODEL:-gpt-5-mini}"
+    local api_key="${AISH_OPENAI_API_KEY:-$OPENAI_API_KEY}"
     local escaped_prompt
     escaped_prompt=$(_aish_escape_json "$prompt")
 
     curl -s https://api.openai.com/v1/chat/completions \
-        -H "Authorization: Bearer $OPENAI_API_KEY" \
+        -H "Authorization: Bearer $api_key" \
         -H "Content-Type: application/json" \
         -d '{
             "model": "'"$model"'",
@@ -159,13 +161,13 @@ aish() {
     # Check API key before starting the spinner
     case "$AISH_PROVIDER" in
         anthropic)
-            if [[ -z "$ANTHROPIC_API_KEY" ]]; then
-                echo "aish: ANTHROPIC_API_KEY is not set." >&2
+            if [[ -z "${AISH_ANTHROPIC_API_KEY:-$ANTHROPIC_API_KEY}" ]]; then
+                echo "aish: No Anthropic API key set. Use AISH_ANTHROPIC_API_KEY or ANTHROPIC_API_KEY." >&2
                 return 1
             fi ;;
         openai)
-            if [[ -z "$OPENAI_API_KEY" ]]; then
-                echo "aish: OPENAI_API_KEY is not set." >&2
+            if [[ -z "${AISH_OPENAI_API_KEY:-$OPENAI_API_KEY}" ]]; then
+                echo "aish: No OpenAI API key set. Use AISH_OPENAI_API_KEY or OPENAI_API_KEY." >&2
                 return 1
             fi ;;
         ollama)

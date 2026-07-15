@@ -35,6 +35,16 @@ export OPENAI_API_KEY=sk-...
 source ~/aish.sh
 ```
 
+### aish-specific API key variables
+
+If you prefer not to expose your API keys globally, you can use `AISH_ANTHROPIC_API_KEY` and `AISH_OPENAI_API_KEY` instead. These take precedence over the non-prefixed variables when both are set.
+
+```bash
+export AISH_PROVIDER=anthropic
+export AISH_ANTHROPIC_API_KEY=sk-ant-...
+source ~/aish.sh
+```
+
 **Ollama** (model is required — set it to any model you have pulled)
 
 ```bash
